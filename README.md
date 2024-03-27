@@ -10,4 +10,7 @@ Néanmoins, avec cette croissance vient la nécessité de moderniser nos opérat
 
 
 ## Fonctionnalités manquantes :
+5. Editer la charactéristique de l'animal selon les mêmes règles que le choix 4
+6. Editer la charactéristique de l'animal selon les mêmes règles que le choix 4
 7. Même règle que pour la récherche 8
+
