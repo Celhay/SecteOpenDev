@@ -1,98 +1,30 @@
-﻿using System;
-using System.IO;
+﻿using RefactoBase;
+using RefactoBase.Models;
 
 // ourAnimals array will store the following: 
-string animalSpecies = "";
-string animalID = "";
-string animalAge = "";
-string animalPhysicalDescription = "";
-string animalPersonalityDescription = "";
-string animalNickname = "";
-string suggestedDonation = "";
+var animalSpecies = "";
+var animalId = "";
+int? animalAge = null;
+var animalPhysicalDescription = "";
+var animalPersonalityDescription = "";
+var animalNickname = "";
 
 // variables that support data entry
-int maxPets = 8;
+var maxPets = 8;
 string? readResult;
-string menuSelection = "";
-int petCount = 0;
-string anotherPet = "y";
-bool validEntry = false;
-int petAge = 0;
-decimal decimalDonation = 0.00m;
+var menuSelection = "";
+var petCount = 0;
+var anotherPet = "y";
+var validEntry = false;
+var petAge = 0;
 
 // array used to store runtime data
-string[,] ourAnimals = new string[maxPets, 7];
+var ourAnimals = new List<Animal>();
 
 // sample data ourAnimals array entries
-for (int i = 0; i < maxPets; i++)
-{
-    switch (i)
-    {
-        case 0:
-            animalSpecies = "dog";
-            animalID = "d1";
-            animalAge = "2";
-            animalPhysicalDescription = "medium sized cream colored female golden retriever weighing about 45 pounds. housebroken.";
-            animalPersonalityDescription = "loves to have her belly rubbed and likes to chase her tail. gives lots of kisses.";
-            animalNickname = "lola";
-            suggestedDonation = "85,00";
-            break;
-
-        case 1:
-            animalSpecies = "dog";
-            animalID = "d2";
-            animalAge = "9";
-            animalPhysicalDescription = "large reddish-brown male golden retriever weighing about 85 pounds. housebroken.";
-            animalPersonalityDescription = "loves to have his ears rubbed when he greets you at the door, or at any time! loves to lean-in and give doggy hugs.";
-            animalNickname = "gus";
-            suggestedDonation = "49,99";
-            break;
-
-        case 2:
-            animalSpecies = "cat";
-            animalID = "c3";
-            animalAge = "1";
-            animalPhysicalDescription = "small white female weighing about 8 pounds. litter box trained.";
-            animalPersonalityDescription = "friendly";
-            animalNickname = "snow";
-            suggestedDonation = "40,00";
-            break;
-
-        case 3:
-            animalSpecies = "cat";
-            animalID = "c4";
-            animalAge = "";
-            animalPhysicalDescription = "";
-            animalPersonalityDescription = "";
-            animalNickname = "lion";
-            suggestedDonation = "";
-
-            break;
-
-        default:
-            animalSpecies = "";
-            animalID = "";
-            animalAge = "";
-            animalPhysicalDescription = "";
-            animalPersonalityDescription = "";
-            animalNickname = "";
-            suggestedDonation = "";
-            break;
-    }
-
-    ourAnimals[i, 0] = "ID #: " + animalID;
-    ourAnimals[i, 1] = "Species: " + animalSpecies;
-    ourAnimals[i, 2] = "Age: " + animalAge;
-    ourAnimals[i, 3] = "Nickname: " + animalNickname;
-    ourAnimals[i, 4] = "Physical description: " + animalPhysicalDescription;
-    ourAnimals[i, 5] = "Personality: " + animalPersonalityDescription;
-    
-    if (!decimal.TryParse(suggestedDonation, out decimalDonation))
-    {
-        decimalDonation = 45.00m; // if suggestedDonation NOT a number, default to 45.00
-    }
-    ourAnimals[i, 6] = $"Suggested Donation: {decimalDonation:C2}";
-}
+var sampleDataProvider = new SampleDataProvider();
+var sampleData = sampleDataProvider.GetSampleData();
+ourAnimals.AddRange(sampleData);
 
 // top-level menu options
 do
@@ -124,21 +56,19 @@ do
     {
         case "1":
             // list all pet info
-            for (int i = 0; i < maxPets; i++)
+            foreach (var currentAnimal in ourAnimals)
             {
-                if (ourAnimals[i, 0] != "ID #: ")
-                {
-                    Console.WriteLine();
-
-                    for (int j = 0; j < 7; j++)
-                    {
-                        Console.WriteLine(ourAnimals[i, j].ToString());
-                    }
-                }
-            }
-
+                Console.WriteLine();
+                Console.WriteLine(currentAnimal.IdToString());
+                Console.WriteLine(currentAnimal.SpeciesToString());
+                Console.WriteLine(currentAnimal.AgeToString());
+                Console.WriteLine(currentAnimal.NicknameToString());
+                Console.WriteLine(currentAnimal.PhysicalDescriptionToString());
+                Console.WriteLine(currentAnimal.PersonalityDescriptionToString());
+                Console.WriteLine(currentAnimal.SuggestedDonationToString());
+            } 
             Console.WriteLine("\r\nPress the Enter key to continue");
-            readResult = Console.ReadLine();
+            Console.ReadLine();
 
             break; 
         case "2":
@@ -154,7 +84,7 @@ do
 
             anotherPet = "y";
             petCount = 0;
-            for (int i = 0; i < maxPets; i++)
+            for (var i = 0; i < maxPets; i++)
             {
                 if (ourAnimals[i, 0] != "ID #: ")
                 {
@@ -190,7 +120,7 @@ do
                 } while (validEntry == false);
 
                 // build the animal the ID number - for example C1, C2, D3 (for Cat 1, Cat 2, Dog 3)
-                animalID = animalSpecies.Substring(0, 1) + (petCount + 1).ToString();
+                animalId = animalSpecies.Substring(0, 1) + (petCount + 1).ToString();
 
                 // get the pet's age. can be ? at initial entry.
                 do
@@ -260,7 +190,7 @@ do
                 } while (validEntry == false);
 
                 // store the pet information in the ourAnimals array (zero based)
-                ourAnimals[petCount, 0] = "ID #: " + animalID;
+                ourAnimals[petCount, 0] = "ID #: " + animalId;
                 ourAnimals[petCount, 1] = "Species: " + animalSpecies;
                 ourAnimals[petCount, 2] = "Age: " + animalAge;
                 ourAnimals[petCount, 3] = "Nickname: " + animalNickname;
@@ -303,7 +233,7 @@ do
             //    ourAnimals[i, 2] = "Age: " + animalAge;
             //    ourAnimals[i, 4] = "Physical description: " + animalPhysicalDescription;
 
-            for (int i = 0; i < maxPets; i++)
+            for (var i = 0; i < maxPets; i++)
             {
                 if (ourAnimals[i, 2] == "Age: ?" && ourAnimals[i, 0] != "ID #: ")
                 {
@@ -329,15 +259,7 @@ do
                         if (readResult != null)
                         {
                             animalPhysicalDescription = readResult.ToLower();
-                            if (animalPhysicalDescription == "")
-                            {
-                                validEntry = false;
-                            }
-                            else
-                            {
-                                validEntry = true;
-                            }
-
+                            validEntry = animalPhysicalDescription != "";
                         }
                     } while (validEntry == false);
 
@@ -355,7 +277,7 @@ do
             //    ourAnimals[i, 3] = "Nickname: " + animalNickname;
             //    ourAnimals[i, 5] = "Personality: " + animalPersonalityDescription;
 
-            for (int i = 0; i < maxPets; i++)
+            for (var i = 0; i < maxPets; i++)
             {
                 if (ourAnimals[i, 3] == "Nickname: " && ourAnimals[i, 0] != "ID #: ")
                 {
@@ -435,7 +357,7 @@ do
         case "8":
             // #1 Display all dogs with a multiple search characteristics
 
-            string dogCharacteristics = "";
+            var dogCharacteristics = "";
 
             while (dogCharacteristics == "")
             {
@@ -452,7 +374,7 @@ do
 
             string[] dogSearches = dogCharacteristics.Split(",");
             // trim leading and trailing spaces from each search term
-            for (int i = 0; i < dogSearches.Length; i++)
+            for (var i = 0; i < dogSearches.Length; i++)
             {
                 dogSearches[i] = dogSearches[i].Trim();
             }
@@ -461,28 +383,28 @@ do
             // #4 update to "rotating" animation with countdown
             string[] searchingIcons = {"\\", "|", "/", "--"};
 
-            bool matchesAnyDog = false;
-            string dogDescription = "";
+            var matchesAnyDog = false;
+            var dogDescription = "";
 
             // loops through the ourAnimals array to search for matching animals
-            for (int i = 0; i < maxPets; i++)
+            for (var i = 0; i < maxPets; i++)
             {
                 if (ourAnimals[i, 1].Contains("dog"))
                 {
 
                     // Search combined descriptions and report results
                     dogDescription = ourAnimals[i, 4] + "\n" + ourAnimals[i, 5];
-                    bool matchesCurrentDog = false;
+                    var matchesCurrentDog = false;
 
-                    foreach (string term in dogSearches)
+                    foreach (var term in dogSearches)
                     {
                         // only search if there is a term to search for
-                        if (term != null && term.Trim() != "")
+                        if (term.Trim() != "")
                         {
-                            for (int j = 2; j > -1 ; j--)
+                            for (var j = 2; j > -1 ; j--)
                             {
                                 // #5 update "searching" message to show countdown
-                                foreach (string icon in searchingIcons)
+                                foreach (var icon in searchingIcons)
                                 {
                                     Console.Write($"\rsearching our dog {ourAnimals[i, 3]} for {term.Trim()} {icon} {j.ToString()}");
                                     Thread.Sleep(100);
