@@ -1,5 +1,7 @@
 ﻿using RefactoBase;
+using RefactoBase.Core;
 using RefactoBase.Models;
+using RefactoBase.Utils;
 
 // ourAnimals array will store the following: 
 var animalSpecies = "";
@@ -33,13 +35,24 @@ do
     
     menuSelection = MenuManager.GetUserMenuSelection();
 
+    switch (menuSelection)
+    {
+        case 0:
+            Console.WriteLine("Good bye !");
+            break;
+        case > 0 and <= 8:
+            MenuManager.DoMenuAction((Actions)menuSelection, ourAnimals);
+            break;
+        default:
+            Console.WriteLine("Your entry is incorrect ! ");
+            break;
+    }
+
+    WaitUserToContinue();
+    
     // switch-case to process the selected menu option
     switch (menuSelection)
     {
-        case 1:
-            ListAllPetInfo(ourAnimals); 
-            WaitUserToContinue();
-            break; 
         case 2:
             // Add a new animal friend to the ourAnimals array
             //
@@ -190,32 +203,7 @@ do
             if (petCount >= maxPets)
             {
                 Console.WriteLine("We have reached our limit on the number of pets that we can manage.");
-                Console.WriteLine("Press the Enter key to continue.");
-                readResult = Console.ReadLine();
             }
-
-            break;
-        case 3:
-            CompleteAgesAndPhysicalDescriptions(ourAnimals);
-            WaitUserToContinue();
-            break;
-        case 4:
-            CompleteNicknamesAndPersonalityDescriptions(ourAnimals);
-            WaitUserToContinue();
-            break;
-        case 5:
-            // Edit an animal’s age");
-            Console.WriteLine("UNDER CONSTRUCTION - please check back next month to see progress.");
-            WaitUserToContinue();
-            break;
-        case 6:
-            // Edit an animal’s personality description");
-            Console.WriteLine("UNDER CONSTRUCTION - please check back next month to see progress.");
-            WaitUserToContinue();
-            break;
-        case 7:
-            // Display all cats with a specified characteristic
-            Console.WriteLine("UNDER CONSTRUCTION - please check back next month to see progress.");
             WaitUserToContinue();
             break;
         case 8:
@@ -303,90 +291,13 @@ do
                 Console.WriteLine("None of our dogs are a match found for: " + dogCharacteristics);
             }
 
-            Console.WriteLine("\n\rPress the Enter key to continue");
-            readResult = Console.ReadLine();
-
-            break;
-
-        default:
+            WaitUserToContinue();
             break;
     }
 } 
 while (menuSelection != 0);
 
-void ListAllPetInfo(List<Animal> animals)
-{
-    foreach (var currentAnimal in animals)
-    {
-        Console.WriteLine();
-        Console.WriteLine(currentAnimal.IdToString());
-        Console.WriteLine(currentAnimal.SpeciesToString());
-        Console.WriteLine(currentAnimal.AgeToString());
-        Console.WriteLine(currentAnimal.NicknameToString());
-        Console.WriteLine(currentAnimal.PhysicalDescriptionToString());
-        Console.WriteLine(currentAnimal.PersonalityDescriptionToString());
-        Console.WriteLine(currentAnimal.SuggestedDonationToString());
-    }
-    Console.WriteLine();
-}
-
-void CompleteAgesAndPhysicalDescriptions(IEnumerable<Animal> animals)
-{
-    foreach (var currentAnimal in animals)
-    {
-        while (currentAnimal.Age is null)
-        {
-            Console.WriteLine($"Enter an age for { currentAnimal.IdToString() }");
-            var ageInput = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(ageInput) && int.TryParse(ageInput, out var age))
-            {
-                currentAnimal.Age = age;
-            }
-        }
-        while (string.IsNullOrWhiteSpace(currentAnimal.PhysicalDescription))
-        {
-            Console.WriteLine($"Enter a physical description for { currentAnimal.IdToString() } (size, color, gender, weight, housebroken)");
-            var physicalDescriptionInput = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(physicalDescriptionInput))
-            {
-                currentAnimal.PhysicalDescription = physicalDescriptionInput.ToLower();
-            }
-        }
-    } 
-
-    Console.WriteLine();
-    Console.WriteLine("Age and physical description fields are complete for all of our friends.");
-}
-
-void CompleteNicknamesAndPersonalityDescriptions(IEnumerable<Animal> animals)
-{
-    foreach (var currentAnimal in animals)
-    { 
-        while (string.IsNullOrWhiteSpace(currentAnimal.Nickname))
-        {
-            Console.WriteLine($"Enter a nickname for { currentAnimal.IdToString() }");
-            var nicknameInput = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(nicknameInput))
-            {
-                currentAnimal.Nickname = nicknameInput;
-            }
-        }
-        while (string.IsNullOrWhiteSpace(currentAnimal.PersonalityDescription))
-        {
-            Console.WriteLine($"Enter a personality description for { currentAnimal.IdToString() } (likes or dislikes, tricks, energy level)");
-            var personalityDescriptionInput = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(personalityDescriptionInput))
-            {
-                currentAnimal.PersonalityDescription = personalityDescriptionInput.ToLower();
-            }
-        }
-    } 
-
-    Console.WriteLine();
-    Console.WriteLine("Nicknames and personality descriptions fields are complete for all of our friends.");
-}
-
-void WaitUserToContinue()
+static void WaitUserToContinue()
 {
     Console.WriteLine();
     Console.WriteLine("Press the Enter key to continue");
