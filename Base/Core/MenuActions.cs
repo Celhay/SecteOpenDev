@@ -21,7 +21,6 @@ public static class MenuActions
 
         Console.WriteLine();
     }
-
     public static void CompleteAgesAndPhysicalDescriptions(this IEnumerable<Animal> animals)
     {
         foreach (var currentAnimal in animals)
@@ -51,7 +50,6 @@ public static class MenuActions
         Console.WriteLine();
         Console.WriteLine("Age and physical description fields are complete for all of our friends.");
     }
-
     public static void CompleteNicknamesAndPersonalityDescriptions(this IEnumerable<Animal> animals)
     {
         foreach (var currentAnimal in animals)
@@ -81,38 +79,18 @@ public static class MenuActions
         Console.WriteLine();
         Console.WriteLine("Nicknames and personality descriptions fields are complete for all of our friends.");
     }
-
-    public static void AddNewAnimal(this IEnumerable<Animal> animals)
+    public static void AddNewAnimal(this List<Animal> animals)
     {
-        // Add a new animal friend to the ourAnimals array
-        //
-        // The ourAnimals array contains
-        //    1. the species (cat or dog). a required field
-        //    2. the ID number - for example C17
-        //    3. the pet's age. can be blank at initial entry.
-        //    4. the pet's nickname. can be blank.
-        //    5. a description of the pet's physical appearance. can be blank.
-        //    6. a description of the pet's personality. can be blank.
+        const int maxPets = 8;
         var newAnimal = new Animal();
-        
-        
         var anotherPet = "y";
-        var petCount = 0;
-        var maxPets = 8;
-        // for (var i = 0; i < maxPets; i++)
-        // {
-        //     if (ourAnimals[i, 0] != "ID #: ")
-        //     {
-        //         petCount += 1;
-        //     }
-        // }
 
-        if (animals.Count() < maxPets)
+        if (animals.Count < maxPets)
         {
-            Console.WriteLine($"We currently have {animals.Count()} pets that need homes. We can manage {maxPets - animals.Count()} more.");
+            Console.WriteLine($"We currently have {animals.Count} pets that need homes. We can manage {maxPets - animals.Count} more.");
         }
 
-        while (anotherPet == "y" && animals.Count() < maxPets)
+        while (anotherPet == "y" && animals.Count < maxPets)
         {
             // get species (cat or dog) - string animalSpecies is a required field 
             do
@@ -131,7 +109,7 @@ public static class MenuActions
             } while (string.IsNullOrWhiteSpace(newAnimal.Species));
 
             // build the animal the ID number - for example C1, C2, D3 (for Cat 1, Cat 2, Dog 3)
-            newAnimal.Id = string.Concat(newAnimal.Species.AsSpan(0, 1), (animals.Count() + 1).ToString());
+            newAnimal.Id = string.Concat(newAnimal.Species.AsSpan(0, 1), (animals.Count + 1).ToString());
 
             // get the pet's age. can be ? at initial entry.
             var petAgeValidated = false;
@@ -139,20 +117,23 @@ public static class MenuActions
             {
                 Console.WriteLine("Enter the pet's age or enter ? if unknown");
                 var ageInput = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(ageInput))
+                
+                if (string.IsNullOrWhiteSpace(ageInput))
+                {
+                    continue;
+                }
+                
+                petAgeValidated = true;
+                var isValidInteger = int.TryParse(ageInput, out var petAge);
+                if (ageInput != "?" && isValidInteger)
                 {
                     petAgeValidated = true;
-                    var isValidInteger = int.TryParse(ageInput, out var petAge);
-                    if (ageInput != "?" && isValidInteger)
-                    {
-                        petAgeValidated = true;
-                        newAnimal.Age = petAge;
-                    } 
-                    else if (ageInput != "?" && !isValidInteger)
-                    {
-                        petAgeValidated = false;
-                        Console.WriteLine("Your entry is incorrect !");
-                    }
+                    newAnimal.Age = petAge;
+                } 
+                else if (ageInput != "?" && !isValidInteger)
+                {
+                    petAgeValidated = false;
+                    Console.WriteLine("Your entry is incorrect !");
                 }
             } while (petAgeValidated == false);
 
@@ -160,42 +141,116 @@ public static class MenuActions
             // get a description of the pet's physical appearance - animalPhysicalDescription can be blank.
             Console.WriteLine("Enter a physical description of the pet (size, color, gender, weight, housebroken)");
             var physicalDescriptionInput = Console.ReadLine();
-            newAnimal.PhysicalDescription = !string.IsNullOrWhiteSpace(physicalDescriptionInput) ? physicalDescriptionInput.ToLower() : "tbd";
+            if (!string.IsNullOrWhiteSpace(physicalDescriptionInput))
+            {
+                newAnimal.PhysicalDescription = physicalDescriptionInput.ToLower();
+            }
 
 
             // get a description of the pet's personality - animalPersonalityDescription can be blank.
             Console.WriteLine("Enter a description of the pet's personality (likes or dislikes, tricks, energy level)");
             var personalityDescriptionInput = Console.ReadLine();
-            newAnimal.PersonalityDescription = !string.IsNullOrWhiteSpace(personalityDescriptionInput) ? personalityDescriptionInput.ToLower() : "tbd";
+            if (!string.IsNullOrWhiteSpace(personalityDescriptionInput))
+            {
+                newAnimal.PersonalityDescription = personalityDescriptionInput.ToLower();
+            }
 
             // get the pet's nickname. animalNickname can be blank.
             Console.WriteLine("Enter a nickname for the pet");
             var nicknameInput = Console.ReadLine();
-            newAnimal.Nickname = !string.IsNullOrWhiteSpace(nicknameInput) ? nicknameInput.ToLower() : "tbd";
-
-            animals.ToList().Add(newAnimal);
-            
+            if (!string.IsNullOrWhiteSpace(nicknameInput))
+            {
+                newAnimal.Nickname = nicknameInput.ToLower();
+            }
+   
+            animals.Add(newAnimal);
             
             // check maxPet limit
-            if (animals.Count() < maxPets)
+            if (animals.Count < maxPets)
             {
                 // another pet?
                 Console.WriteLine("Do you want to enter info for another pet (y/n)");
                 do
                 {
                     var anotherPetInput = Console.ReadLine();
-                    if (anotherPetInput.ToLower() is "y" or "n")
+                    if (anotherPetInput?.ToLower() is "y" or "n")
                     {
                         anotherPet = anotherPetInput.ToLower();
                     }
-                } while (anotherPet != "y" && anotherPet != "n");
+                } while (anotherPet is not ("y" or "n"));
             }
             //NOTE: The value of anotherPet (either "y" or "n") is evaluated in the while statement expression - at the top of the while loop
         }
 
-        if (animals.Count() >= maxPets)
+        if (animals.Count >= maxPets)
         {
             Console.WriteLine("We have reached our limit on the number of pets that we can manage.");
+        } 
+    }
+    public static void DisplayAllDogsWithAMultipleSearchCharacteristics(this IEnumerable<Animal> animals)
+    {
+        // #1 Display all dogs with a multiple search characteristics
+        var dogCharacteristics = "";
+        while (dogCharacteristics == "")
+        {
+            // #2 have user enter multiple comma separated characteristics to search for
+            Console.WriteLine();
+            Console.WriteLine("Enter dog characteristics to search for separated by commas: ");
+            var characteristicsInput = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(characteristicsInput))
+            {
+                continue;
+            }
+
+            dogCharacteristics = characteristicsInput.ToLower();
+            Console.WriteLine();
+        }
+
+        var dogSearches = dogCharacteristics.Split(",").ToList();
+
+        // trim leading and trailing spaces from each search term
+        dogSearches.ForEach(x => x.Trim());
+
+        dogSearches.Sort();
+
+        // #4 update to "rotating" animation with countdown
+        string[] searchingIcons = { "\\", "|", "/", "--" };
+
+        var matchesAnyDog = false;
+
+        // loops through the ourAnimals array to search for matching animals
+        foreach (var currentAnimal in animals)
+        {
+            if (currentAnimal.Species.ToLower() == "dog")
+            {
+                var dogDescription = currentAnimal.PhysicalDescription + "\n" + currentAnimal.PersonalityDescription;
+                var matchesCurrentDog = false;
+
+                foreach (var term in dogSearches)
+                {
+                    // #3a iterate submitted characteristic terms and search description for each term
+                    if (dogDescription.Contains(term))
+                    {
+                        // #3b update message to reflect current search term match 
+                        Console.WriteLine($"\rOur dog {currentAnimal.Nickname} matches your search for {term}");
+
+                        matchesCurrentDog = true;
+                        matchesAnyDog = true;
+                    }
+                }
+
+                // #3d if the current dog is match, display the dog's info
+                if (matchesCurrentDog)
+                {
+                    Console.WriteLine($"\r{currentAnimal.Nickname} ({currentAnimal.Id})\n{dogDescription}\n");
+                }
+            }
+        }
+
+        if (!matchesAnyDog)
+        {
+            Console.WriteLine("None of our dogs are a match found for: " + dogCharacteristics);
         }
     }
 }

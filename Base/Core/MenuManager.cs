@@ -3,8 +3,8 @@ using RefactoBase.Utils;
 
 namespace RefactoBase.Core;
 
-public class MenuManager
-{ 
+public static class MenuManager
+{
     public static void DisplayMenu()
     {
         Console.Clear();
@@ -44,7 +44,7 @@ public class MenuManager
         return null;
     }
 
-    public static void DoMenuAction(Actions selectedAction, IEnumerable<Animal> animals)
+    public static void DoMenuAction(Actions selectedAction, List<Animal> animals)
     {
         switch (selectedAction)
         {
@@ -70,9 +70,10 @@ public class MenuManager
                 Console.WriteLine("UNDER CONSTRUCTION - please check back next month to see progress.");
                 break;
             case Actions.DisplayAllDogsWithASpecifiedCharacteristic:
+                animals.DisplayAllDogsWithAMultipleSearchCharacteristics();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(selectedAction), selectedAction, null);
         }
-    }
+    } 
 }

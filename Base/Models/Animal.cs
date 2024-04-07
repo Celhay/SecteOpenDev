@@ -3,8 +3,8 @@ namespace RefactoBase.Models;
 public class Animal
 {
     // Properties of the animal
-    public string Id { get; set; }
-    public string Species { get; set; }
+    public string Id { get; set; } = "";
+    public string Species { get; set; } = "";
     public string? Nickname { get; set; }
     public int? Age { get; set; }
     public string? PhysicalDescription { get; set; }
@@ -18,5 +18,5 @@ public class Animal
     public string NicknameToString() => "Nickname: " + Nickname;
     public string PhysicalDescriptionToString() => "Physical description: " + PhysicalDescription;
     public string PersonalityDescriptionToString() => "Personality: " + PersonalityDescription;
-    public string SuggestedDonationToString() => "Suggested Donation: " + SuggestedDonation;
+    public string SuggestedDonationToString() => $"Suggested Donation: {SuggestedDonation:C2}";
 }
